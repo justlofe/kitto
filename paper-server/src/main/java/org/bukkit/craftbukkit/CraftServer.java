@@ -271,6 +271,8 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
+import su.windmill.kitto.KittoServer;
+import su.windmill.kitto.KittoServerImpl;
 
 public final class CraftServer implements Server {
     private final String serverName = io.papermc.paper.ServerBuildInfo.buildInfo().brandName();
@@ -283,6 +285,7 @@ public final class CraftServer implements Server {
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager; // Paper - Move down
+    private final KittoServer kittoServer; // kitto - kitto server
     public final io.papermc.paper.plugin.manager.PaperPluginManagerImpl paperPluginManager;
     private final StructureManager structureManager;
     final DedicatedServer console;
@@ -429,6 +432,10 @@ public final class CraftServer implements Server {
         this.paperPluginManager = new io.papermc.paper.plugin.manager.PaperPluginManagerImpl(this, this.commandMap, pluginManager);
         this.pluginManager.paperPluginManager = this.paperPluginManager;
          // Paper end
+
+        // kitto start
+        this.kittoServer = new KittoServerImpl();
+        // kitto end
 
         CraftRegistry.setMinecraftRegistry(console.registryAccess());
 

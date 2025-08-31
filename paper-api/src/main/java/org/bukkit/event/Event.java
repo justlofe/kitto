@@ -3,12 +3,15 @@ package org.bukkit.event;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import su.windmill.kitto.event.EventBus;
 
 /**
  * Represents an event.
  * <br>
- * All events require a static method named getHandlerList() which returns the same {@link HandlerList} as {@link #getHandlers()}.
+ * All events require a static method named getHandlerList() which returns the same {@link HandlerList} as {@link #getHandlers()}, and
+ * static method getStaticEventBus which returns the same {@link EventBus} as {@link #getEventBus()}.
  *
  * @see PluginManager#callEvent(Event)
  * @see PluginManager#registerEvents(Listener,Plugin)
@@ -67,6 +70,8 @@ public abstract class Event {
     }
 
     @NotNull
+    @Deprecated(forRemoval = true, since = "kitto fork")
+    @ApiStatus.ScheduledForRemoval(inVersion = "kitto release")
     public abstract HandlerList getHandlers();
 
     /**

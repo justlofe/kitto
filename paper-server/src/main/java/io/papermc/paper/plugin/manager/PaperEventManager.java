@@ -4,6 +4,7 @@ import co.aikar.timings.TimedEventExecutor;
 import com.destroystokyo.paper.event.server.ServerExceptionEvent;
 import com.destroystokyo.paper.exception.ServerEventException;
 import com.google.common.collect.Sets;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Server;
 import org.bukkit.Warning;
 import org.bukkit.event.Event;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
+import su.windmill.kitto.event.EventBus;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -41,6 +43,22 @@ class PaperEventManager {
         } else if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
             throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
         }
+
+        // kitto start - execute event on event bus
+        EventBus<Event> eventBus = EventBus.getEventBus((Class<Event>) event.getClass());
+        for (final EventPriority priority : EventPriority.values()) {
+            var pipeline = eventBus.getPipeline(priority);
+            for (final Key key : pipeline.order()) {
+                try {
+                    pipeline.getObject(key).execute(event);
+                }
+                catch (Throwable ex) {
+                    String msg = "Could not pass event " + event.getEventName() + " to " + key.asString();
+                    this.server.getLogger().log(Level.SEVERE, msg, ex);
+                }
+            }
+        }
+        // kitto end
 
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
