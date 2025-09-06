@@ -435,6 +435,7 @@ public final class CraftServer implements Server {
 
         // kitto start
         this.kittoServer = new KittoServerImpl();
+        KittoServer.setServer(kittoServer);
         // kitto end
 
         CraftRegistry.setMinecraftRegistry(console.registryAccess());
